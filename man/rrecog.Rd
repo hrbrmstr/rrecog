@@ -4,8 +4,13 @@
 \name{rrecog}
 \alias{rrecog}
 \alias{rrecog-package}
-\title{...}
+\title{Pattern Recognition for Hosts, Services and Content}
 \description{
+'Rapid7' developed a framework dubbed 'Recog' \url{https://github.com/rapid7/recog}
+to facilitate fingerprinting hosts, services and content. The original tool
+was written in 'Ruby'. Tools are provided to download and match fingerprints.
+}
+\details{
 \itemize{
 \item URL: \url{https://gitlab.com/hrbrmstr/rrecog}
 \item BugReports: \url{https://gitlab.com/hrbrmstr/rrecog/issues}

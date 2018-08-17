@@ -1,6 +1,6 @@
 Package: rrecog
 Type: Package
-Title: rrecog title goes here otherwise CRAN checks fail
+Title: Pattern Recognition for Hosts, Services and Content
 Version: 0.1.0
 Date: 2018-08-17
 Authors@R: c(
@@ -8,17 +8,21 @@ Authors@R: c(
            comment = c(ORCID = "0000-0001-5670-2640"))
   )
 Maintainer: Bob Rudis <bob@rud.is>
-Description: A good description goes here otherwise CRAN checks fail.
+Description: 'Rapid7' developed a framework dubbed 'Recog' <https://github.com/rapid7/recog>
+    to facilitate fingerprinting hosts, services and content. The original tool
+    was written in 'Ruby'. Tools are provided to download and match fingerprints.
 URL: https://gitlab.com/hrbrmstr/rrecog
 BugReports: https://gitlab.com/hrbrmstr/rrecog/issues
 Encoding: UTF-8
-License: AGPL
+License: MIT + file LICENSE
 Suggests:
     testthat,
     covr
 Depends:
     R (>= 3.2.0)
 Imports:
+    ore,
+    xml2,
     httr,
-    jsonlite
+    magrittr
 RoxygenNote: 6.0.1.9000

@@ -4,11 +4,21 @@ output: rmarkdown::github_document
 
 # rrecog
 
+Pattern Recognition for Hosts, Services and Content
+
 ## Description
 
+'Rapid7' developed a framework dubbed 'Recog' <https://github.com/rapid7/recog> to facilitate fingerprinting hosts, services and content. The original program was written in 'Ruby'. Tools are provided to download and match fingerprints using R.
+    
 ## What's Inside The Tin
 
 The following functions are implemented:
+
+- `download_fingerprints`:	Download fingerprints from the Recog repo
+- `load_fingerprints`:	Load a directory of fingerprints
+- `read_fingerprints_file`:	Ingest Recog XML fingerprints from a file and precompile regular expressions
+- `recog_match`:	Find fingerprint matches for a given source
+- `use_builtin_fingerprints`:	Use built-in fingerprints
 
 ## Installation
 
@@ -30,3 +40,38 @@ packageVersion("rrecog")
 
 ```
 
+### Use Real Data
+
+```{r}
+library(httr)
+library(tidyverse)
+
+# using the internet as a data source is fraught with peril
+safe_GET <- safely(httr::GET)
+
+sprintf(
+  fmt = "http://%s", 
+  c(
+    "r-project.org", "pypi.org", "www.mvnrepository.com", "spark.apache.org",
+    "www.oracle.com", "www.microsoft.com", "www.apple.com", "feedly.com"
+  )
+) -> use_these
+
+pb <- progress_estimated(length(use_these))
+map(use_these, ~{
+  pb$tick()$print()
+  res <- safe_GET(.x, httr::timeout(2))
+  if (is.null(res$result)) return(NULL)
+  res$result$headers$server
+}) %>% 
+  compact() %>% 
+  flatten_chr() -> server_headers
+
+server_headers
+
+recog_db <- use_builtin_fingerprints()
+map_df(server_headers, ~recog_match(recog_db, .x, "http")) %>%
+  glimpse() -> found
+
+select(found, orig, service.vendor, service.version, apache.info, description)
+```
