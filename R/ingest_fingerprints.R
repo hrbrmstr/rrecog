@@ -108,8 +108,8 @@ print.recog_fingerprint <- function(x, ...) {
     "<Recog fingerprint>\n",
     "     Pattern: ", x$pattern,
     "\n Regex flags: ", x$regex_flags,
-    "\n Description: ", x$regex_flags,
-    "\n    Extracts: ", paste0(sapply(x$params, "name"), collapse=", "),
+    "\n Description: ", x$description,
+    "\n    Extracts: ", paste0(sapply(x$params, `[[`, "name"), collapse=", "),
     sep=""
   )
 }
