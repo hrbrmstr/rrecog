@@ -1,4 +1,4 @@
-.recog_match <- function(recog_db, source, protocols = ".*", matches = NULL) {
+.recog_pick <- function(recog_db, source, protocols = ".*", matches = NULL) {
 
   if (
     identical(
@@ -27,40 +27,33 @@
 
   if (length(matchers) == 0) return(list())
 
-  lapply(recog_db[matchers], function(.x) {
+  out <- data.frame(stringsAsFactors=FALSE)
 
-    preference <- .x$preference_value
+  for(fps in recog_db[matchers]) {
 
-    lapply(.x$fingerpints, function(.x) {
+    preference <- fps$preference_value
 
-      res <- ore::ore_search(.x$compiled_pattern, source, simplify=TRUE)
-
+    for(fp in fps$fingerpints) {
+      res <- ore::ore_search(fp$compiled_pattern, source, simplify=TRUE)
       if (!is.null(res)) {
-
         grps <- as.vector(ore::groups(res))
-
-        lapply(.x$params, function(.x) {
+        lapply(fp$params, function(.x) {
           value <- if (.x$position == 0) .x$value else grps[.x$position]
           as.list(set_names(value, .x$name))
-        }) %>% unlist(recursive = FALSE) -> mat_out
-
+        }) %>% unlist(recursive = FALSE) %>%
+          as.data.frame(stringsAsFactors=FALSE) -> mat_out
         mat_out$preference <- preference
-        mat_out$description <- .x$description
-        mat_out$pattern <- .x$pattern
+        mat_out$description <- fp$description
+        mat_out$pattern <- fp$pattern
         mat_out$orig <- source
-
-        mat_out
-
+        out <- mat_out
+        break
       }
-    }) %>%
-      discard(is.null) %>%
-      discard(~length(.x) == 0)
+    }
 
-  }) %>%
-    discard(is.null) %>%
-    discard(~length(.x) == 0) %>%
-    unlist(recursive = FALSE) %>%
-    bind_rows() -> out
+    if (nrow(out) > 0) break
+
+  }
 
   class(out) <- c("tbl_df", "tbl", "data.frame")
 
@@ -68,16 +61,12 @@
 
 }
 
-#' Find fingerprint matches for a given source
+#' Find first fingerprint match for a given source
 #'
-#' This is an exhaustive lookup for the fingerprint in all the
-#' `protocol`/`matches` categories. As a result, it's not very fast
-#' on its own. However, the function has been [memoise::memosie()]'d.
-#' As such, if you are performing a number of recogs in a single
-#' R session and working from a typical data source (i.e. a large file
-#' with many common strings, such as a collection of HTTP `Server``
-#' header strings), you will see performance gains after each distinct
-#' match input.
+#' Unlike the full search sibling, this function will only return
+#' the first match found. It does this in `preference_value` order
+#' but is not guaranteed to find the best match, only the first one
+#' (for speed).
 #'
 #' @md
 #' @param recog_db a structure created with [load_fingerprints()] or
@@ -88,5 +77,5 @@
 #' @export
 #' @examples
 #' recog_db <- use_builtin_fingerprints()
-#' recog_match(recog_db, "VShell_Special_Edition_2_5_0_204 VShell", "ssh")
-recog_match <- memoise::memoise(.recog_match)
+#' recog_pick(recog_db, "VShell_Special_Edition_2_5_0_204 VShell", "ssh")
+recog_pick <- memoise::memoise(.recog_pick)

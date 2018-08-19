@@ -19,6 +19,7 @@ The following functions are implemented:
   - `read_fingerprints_file`: Ingest Recog XML fingerprints from a file
     and precompile regular expressions
   - `recog_match`: Find fingerprint matches for a given source
+  - `recog_pick`:	Find first fingerprint match for a given source
   - `use_builtin_fingerprints`: Use built-in fingerprints
 
 ## Installation

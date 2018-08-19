@@ -24,5 +24,6 @@ Imports:
     ore,
     xml2,
     httr,
+    memoise,
     magrittr
 RoxygenNote: 6.0.1.9000

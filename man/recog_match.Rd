@@ -16,7 +16,14 @@ recog_match(recog_db, source, protocols = ".*", matches = NULL)
 are boolean \strong{OR'd} together}
 }
 \description{
-Find fingerprint matches for a given source
+This is an exhaustive lookup for the fingerprint in all the
+\code{protocol}/\code{matches} categories. As a result, it's not very fast
+on its own. However, the function has been \code{\link[memoise:memosie]{memoise::memosie()}}'d.
+As such, if you are performing a number of recogs in a single
+R session and working from a typical data source (i.e. a large file
+with many common strings, such as a collection of HTTP `Server``
+header strings), you will see performance gains after each distinct
+match input.
 }
 \examples{
 recog_db <- use_builtin_fingerprints()

@@ -14,4 +14,5 @@
 #' @import ore
 #' @import xml2
 #' @import httr
+#' @importFrom memoise memoise
 NULL

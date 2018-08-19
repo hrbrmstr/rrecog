@@ -51,11 +51,14 @@ read_fingerprints_file <- function(path) {
           list(position = position, name = name, value = value)
         }) -> params
 
+      certainty <- as.numeric(xml2::xml_attr(fingerprint, "certainty") %||% NA)
+
       list(
         pattern = pattern,
         compiled_pattern = compiled_pattern,
         regex_flags = regex_flags,
         description = description,
+        certainty = certainty,
         params = params
       ) -> out
 
@@ -106,10 +109,11 @@ print.recog_fingerprints <- function(x, ...) {
 print.recog_fingerprint <- function(x, ...) {
   cat(
     "<Recog fingerprint>\n",
-    "     Pattern: ", x$pattern,
+      "     Pattern: ", x$pattern,
     "\n Regex flags: ", x$regex_flags,
     "\n Description: ", x$description,
     "\n    Extracts: ", paste0(sapply(x$params, `[[`, "name"), collapse=", "),
+    "\n   Certainty: ", x$certainty,
     sep=""
   )
 }

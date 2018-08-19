@@ -16,7 +16,9 @@ load_fingerprints <- function(fingerprints_directory) {
   stopifnot(dir.exists(fingerprints_directory))
 
   list.files(fingerprints_directory, "xml$|xml\\.gz$", full.names = TRUE) %>%
-    map(read_fingerprints_file)
+    map(read_fingerprints_file) -> x
+
+  x[order(sapply(x, `[[`, "preference_value"), decreasing = TRUE)]
 
 }
 
